@@ -165,7 +165,7 @@ curl -s http://localhost:8010/v1/audio/transcriptions \
 In Open WebUI settings → Audio → STT:
 - **Engine:** OpenAI
 - **API Base URL:** `http://your-spark-ip:8010/v1`
-- **Model:** `parakeet-tdt-0.6b-v3`
+- **Model:** `whisper-1`
 
 ### Python Client
 
