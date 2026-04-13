@@ -1,0 +1,10 @@
+# Environment variables
+.env
+
+# Editor backups
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+docker/portainer-stack.yml

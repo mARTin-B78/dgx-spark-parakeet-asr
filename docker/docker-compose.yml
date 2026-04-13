@@ -1,0 +1,61 @@
+
+# =============================================================================
+# PORTAINER STACK — Parakeet ASR
+# DGX Spark (ARM64 / CUDA 13 / Blackwell GB10)
+#
+# IMPORTANT: Before deploying this stack in Portainer, you must first
+# build the ASR image on your Spark by running:
+#
+#   bash ~/parakeet-spark/build-and-deploy.sh
+#
+# That script builds the image: parakeet-tdt-v3-spark:latest
+# This stack then references that local image.
+#
+# In Portainer:
+#   1. Stacks → Add Stack → name: "voice-agent"
+#   2. Paste this YAML
+#   3. Add environment variable: NGC_API_KEY = nvapi-your-key-here
+#   4. Deploy
+# =============================================================================
+
+# version: '3.8'
+
+services:
+# ─── ASR: Parakeet TDT 0.6b v3 ────────────────────────────────────────────
+  # Custom NeMo-based container with OpenAI-compatible API
+  # 25 European languages with auto-detection
+  # Endpoint: http://<spark-ip>:8010/v1/audio/transcriptions
+  parakeet-asr:
+    image: parakeet-tdt-v3-spark:latest
+    container_name: parakeet-asr
+    restart: unless-stopped
+    environment:
+      - NGC_API_KEY=${NGC_API_KEY}
+      - PARAKEET_MODEL=nvidia/parakeet-tdt-0.6b-v3
+      - MAX_SEGMENT_SECONDS=1200
+      - MAX_UPLOAD_MB=200
+      - HF_HOME=/cache/huggingface
+      - TRANSFORMERS_CACHE=/cache/huggingface
+      - CUDA_VISIBLE_DEVICES=0
+      - NCCL_P2P_DISABLE=1
+    ports:
+      - "8010:8000"
+    volumes:
+      - parakeet-model-cache:/cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    shm_size: 16gb
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 180s
+      retries: 3
+
+volumes:
+  parakeet-model-cache:

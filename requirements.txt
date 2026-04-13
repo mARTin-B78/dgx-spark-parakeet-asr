@@ -1,0 +1,29 @@
+# =============================================================================
+# Requirements for Parakeet TDT v3 on DGX Spark (ARM64)
+#
+# NOTE: torch, torchaudio, and CUDA libs are already in the NGC base image.
+#       Do NOT install them here or you'll break the ARM64 GPU support.
+# =============================================================================
+
+# ── NeMo ASR toolkit ─────────────────────────────────────────────────────────
+# The [asr] extra pulls in all speech recognition dependencies
+nemo_toolkit[asr]>=2.1.0
+
+# ── Pin lhotse to avoid DynamicCutSampler TypeError ──────────────────────────
+# Several DGX Spark users hit this bug with newer lhotse versions.
+# Pin to a known-good version that works with NeMo 2.x on ARM64.
+lhotse>=1.24.0,<1.30.0
+
+# ── Audio processing ─────────────────────────────────────────────────────────
+librosa>=0.10.0
+soundfile>=0.12.0
+pydub>=0.25.1
+
+# ── FastAPI server ───────────────────────────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+pyyaml>=6.0
+aiofiles>=24.1.0
