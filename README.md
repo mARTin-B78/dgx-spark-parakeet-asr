@@ -43,7 +43,7 @@ Save the following as `docker-compose.yml` in that folder:
 version: '3.8'
 services:
   parakeet-asr:
-    image: yourusername/parakeet-tdt-v3-spark:latest  # <-- Replace 'yourusername' with the actual Docker Hub username
+    image: martinb78/parakeet-tdt-v3-spark:latest
     container_name: parakeet-asr
     restart: unless-stopped
     environment:
